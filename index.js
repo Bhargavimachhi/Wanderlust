@@ -4,6 +4,7 @@ const path=require("path");
 const methodOverride=require("method-override");
 const port=8000;
 const mongoose=require("mongoose");
+const Listing=require("./models/listing.js")
 
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
@@ -27,3 +28,8 @@ main().then(()=>{
 app.listen(port,()=>{
     console.log("Server Started");
 });
+
+app.get("/",async (req,res)=>{
+    let lists=await Listing.find();
+    res.render("index.ejs",{lists});
+})
