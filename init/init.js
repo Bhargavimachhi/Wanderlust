@@ -14,7 +14,12 @@ main().then(()=>{
 
 let init= async ()=>{
     await Listing.deleteMany({});
-    await Listing.insertMany(temp);
+    
+    for(let data of temp){
+        let l=new Listing(data);
+        await l.save(); 
+    }
+
     console.log("Data Inserted");
 };
 
