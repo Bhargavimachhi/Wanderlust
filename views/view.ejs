@@ -25,7 +25,6 @@
                             <form method="get" action="/listings/<%= list.id%>/edit"><button class="btn" style="background-color: red; color: white;">Edit</button></form>&nbsp;
                             <form method="get" action="/listings/<%= list.id%>/delete"><button class="btn" style="background-color: red; color: white;">Delete</button></form>
                         </div>
-                        
                     </div>
                 </div>
             </div>
@@ -52,13 +51,20 @@
     <hr>
     <div class="container">
         <h4>Reviews &nbsp; <%=list.review.length %></h4><br>
-            <% for(let r of list.review){ %>
-                <div>
-                    <h5>Rating : <%= r.rating %></h5>
-                    <h5><%= r.comment %></h5>
-                    <h5><%= r.createdAt %></h5> 
-                </div><br>
-            <% } %>
+            <div class="row">
+                <% for(let r of list.review){ %>
+                <div class="col-sm-6">
+                  <div class="card" style="border: 1px solid red !important;">
+                    <div class="card-body">
+                      <h5 class="card-title">User</h5>
+                      <p class="card-text">Rating : <%= r.rating %></p>
+                      <p class="card-text"><%= r.comment %></p>
+                      <a href="/listings/<%= list.id%>/review/<%= r._id %>"><button class="btn" style="background-color: red; color: white;">Delete</button></a>
+                    </div>
+                  </div>
+                </div>
+                <% } %>
+            </div>
     </div><br>
     <%- include("includes/footer.ejs") %>
 </body>

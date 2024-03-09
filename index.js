@@ -104,7 +104,6 @@ app.get("/listings/:id/delete",wrapAsync(async (req,res)=>{
     try{
         let {id}=req.params;
         let data = await Listing.findByIdAndDelete(id,req.body);
-        console.log(data.review);
         await Review.deleteMany({_id : {$in : data.review}});
         let lists=await Listing.find({});
         res.render("index.ejs",{lists});
@@ -136,6 +135,27 @@ app.post("/listings/:id/review",wrapAsync(async (req,res)=>{
         }
     }
 }))
+
+app.get("/listings/:id/review/:rid",wrapAsync(async (req,res)=>{
+    let {id,rid}=req.params;
+    console.log(id,rid);
+    let list=await Listing.findById(id);
+    let review=await Review.findById(rid);
+    if(!list || !review){
+        res.render("error.ejs",{code : 400,msg:"Bad Request",description:"List or Review doesn't exist"});
+    }
+    else{
+        for(let i=0;i<list.review.length;i++){
+            if(list.review[i]._id == rid){
+                list.review.splice(i,i+1);
+                await list.save();
+                break;
+            }
+        }
+        await Review.findByIdAndDelete({_id : rid});
+        res.redirect(`/listings/${id}`);
+    }
+}));
 
 app.get("*",(req,res)=>{
     res.render("error.ejs",{code : 404,msg:"Page Not Found",description:""});
