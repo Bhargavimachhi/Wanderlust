@@ -5,8 +5,10 @@ const methodOverride=require("method-override");
 const port=8000;
 const mongoose=require("mongoose");
 const Listing=require("./models/listing.js");
+const Review=require("./models/review.js");
 const ejsMate=require("ejs-mate");
 const listSchema = require("./utils/listValidation.js");
+const reviewSchema = require("./utils/reviewValidation.js");
 
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
@@ -49,7 +51,7 @@ app.get("/listings/new",wrapAsync(async (req,res)=>{
 app.post("/listings/new",wrapAsync(async (req,res,next)=>{
     let {error}= listSchema.validate(req.body);
     if(error){
-        res.render("error.ejs",{code : 400,msg:"Bad Request",description:"Enter Valid Data"});
+        res.render("error.ejs",{code : 400,msg:"Bad Request",description:error.message});
     }
     else{
         let listing=new Listing(req.body);
@@ -65,7 +67,7 @@ app.get("/listings/:id",wrapAsync(async (req,res)=>{
         res.render("view.ejs",{list :data});
     }
     catch(err){
-        res.render("error.ejs",{code : 400,msg : "Bad Request",description:"Id you entered doesn't exist enter Valid Id"});
+        res.render("error.ejs",{code : 400,msg : "Bad Request",description:err.message});
     }
 }))
 
@@ -76,14 +78,14 @@ app.get("/listings/:id/edit",wrapAsync(async(req,res)=>{
         res.render("edit.ejs",{list :data});
     }
     catch(err){
-        res.render("error.ejs",{code : 400,msg : "Bad Request",description:"Id you entered doesn't exist enter Valid Id"});
+        res.render("error.ejs",{code : 400,msg : "Bad Request",description:err.message});
     }
 }))
 
 app.patch("/listings/:id",wrapAsync(async (req,res)=>{
     let {error}= listSchema.validate(req.body);
     if(error){
-        res.render("error.ejs",{code : 400,msg:"Bad Request",description:"Enter Valid Data"});
+        res.render("error.ejs",{code : 400,msg:"Bad Request",description:error.message});
     }
     else{
         try{
@@ -93,7 +95,7 @@ app.patch("/listings/:id",wrapAsync(async (req,res)=>{
             res.render("index.ejs",{lists});
         }
         catch(err){
-            res.render("error.ejs",{code : 400,msg : "Bad Request",description:"Id you entered doesn't exist enter Valid Id"});
+            res.render("error.ejs",{code : 400,msg : "Bad Request",description:err.message});
         }
     }
 }))
@@ -101,12 +103,37 @@ app.patch("/listings/:id",wrapAsync(async (req,res)=>{
 app.get("/listings/:id/delete",wrapAsync(async (req,res)=>{
     try{
         let {id}=req.params;
-        await Listing.findByIdAndDelete(id,req.body);
+        let data = await Listing.findByIdAndDelete(id,req.body);
+        console.log(data.review);
+        await Review.deleteMany({_id : {$in : data.review}});
         let lists=await Listing.find({});
         res.render("index.ejs",{lists});
     }
     catch(err){
-        res.render("error.ejs",{code : 400,msg : "Bad Request",description:"Id you entered doesn't exist enter Valid Id"});
+        res.render("error.ejs",{code : 400,msg : "Bad Request",description:err.message});
+    }
+}))
+
+app.post("/listings/:id/review",wrapAsync(async (req,res)=>{
+    let {id}=req.params;
+    let data=await Listing.findById(id);
+    console.log(req.body);
+    if(!data){
+        res.render("error.ejs",{code : 400,msg:"Bad Request",description:"Id you entered doesn't exist enter Valid Id"});
+    }
+    else{
+        let {error}= reviewSchema.validate(req.body);
+        if(error){
+            console.log(error.message);
+            res.render("error.ejs",{code : 400,msg:"Bad Request",description:error.message});
+        }
+        else{
+            let newReview=new Review(req.body);
+            data.review.push(newReview);
+            await data.save();
+            await newReview.save();
+            res.redirect(`/listings/${id}`);
+        }
     }
 }))
 
@@ -115,5 +142,5 @@ app.get("*",(req,res)=>{
 })
 
 app.use((err,req,res,next)=>{
-    res.render("error.ejs",{code : 500,msg:"Internal Server Error",description:""});
+    res.render("error.ejs",{code : 500,msg:"Internal Server Error",description:err.message});
 })
