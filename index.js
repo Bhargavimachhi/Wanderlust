@@ -26,59 +26,74 @@ main().then(()=>{
     console.log("Failure");
 });
 
+function wrapAsync(fn){
+    return function(req,res,next){
+        fn(req,res,next).catch((err)=>next(err));
+    }
+}
+
 app.listen(port,()=>{
     console.log("Server Started");
 });
 
-app.get("/listings",async (req,res)=>{
-    console.log("/listings");
+app.get("/listings",wrapAsync(async (req,res)=>{
     let lists=await Listing.find();
     res.render("index.ejs",{lists});
-})
+}))
 
-app.get("/listings/new",async (req,res)=>{
-    console.log("/listings/new");
+app.get("/listings/new",wrapAsync(async (req,res)=>{
     res.render("new.ejs");
-})
+}))
 
-app.post("/listings/new",async (req,res)=>{
-    console.log("/listings/bew post");
-
+app.post("/listings/new",wrapAsync(async (req,res)=>{
     let listing=new Listing(req.body);
     await listing.save();
     res.redirect("/listings");
-})
+}))
 
-app.get("/listings/:id",async (req,res)=>{
-    console.log("/listings/id");
-
+app.get("/listings/:id",wrapAsync(async (req,res)=>{
     let {id}=req.params;
-    let data=await Listing.findById(id);
-    res.render("view.ejs",{list :data});
-})
+    try{
+        let data=await Listing.findById(id);
+        res.render("view.ejs",{list :data});
+    }
+    catch(err){
+        res.render("error.ejs",{code : 400,msg : "Bad Request",description:"Id you entered doesn't exist enter Valid Id"});
+    }
+    
+}))
 
-app.get("/listings/:id/edit",async(req,res)=>{
+
+app.get("/listings/:id/edit",wrapAsync(async(req,res)=>{
     console.log("/listings/id/edit");
 
     let {id}=req.params;
     let data=await Listing.findById(id);
     res.render("edit.ejs",{list : data});
-})
+}))
 
-app.patch("/listings/:id",async (req,res)=>{
+app.patch("/listings/:id",wrapAsync(async (req,res)=>{
     console.log("/listings/id patch");
 
     let {id}=req.params;
     await Listing.findByIdAndUpdate(id,req.body);
     let lists=await Listing.find({});
     res.render("index.ejs",{lists});
-})
+}))
 
-app.get("/listings/:id/delete",async (req,res)=>{
+app.get("/listings/:id/delete",wrapAsync(async (req,res)=>{
     console.log("/listings/id delete");
 
     let {id}=req.params;
     await Listing.findByIdAndDelete(id,req.body);
     let lists=await Listing.find({});
     res.render("index.ejs",{lists});
+}))
+
+app.get("*",(req,res)=>{
+    res.render("error.ejs",{code : 404,msg:"Page Not Found",description:""});
+})
+
+app.use((err,req,res,next)=>{
+    res.render("error.ejs",{code : 500,msg:"Internal Server Error",description:""});
 })
