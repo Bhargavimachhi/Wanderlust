@@ -6,6 +6,7 @@ const port=8000;
 const mongoose=require("mongoose");
 const Listing=require("./models/listing.js");
 const ejsMate=require("ejs-mate");
+const listSchema = require("./utils/listValidation.js");
 
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
@@ -45,49 +46,68 @@ app.get("/listings/new",wrapAsync(async (req,res)=>{
     res.render("new.ejs");
 }))
 
-app.post("/listings/new",wrapAsync(async (req,res)=>{
-    let listing=new Listing(req.body);
-    await listing.save();
-    res.redirect("/listings");
+app.post("/listings/new",wrapAsync(async (req,res,next)=>{
+    let {error}= listSchema.validate(req.body);
+    if(error){
+        res.render("error.ejs",{code : 400,msg:"Bad Request",description:"Enter Valid Data"});
+    }
+    else{
+        let listing=new Listing(req.body);
+        await listing.save();
+        res.redirect("/listings");
+    }
 }))
 
 app.get("/listings/:id",wrapAsync(async (req,res)=>{
-    let {id}=req.params;
     try{
+        let {id}=req.params;
         let data=await Listing.findById(id);
         res.render("view.ejs",{list :data});
     }
     catch(err){
         res.render("error.ejs",{code : 400,msg : "Bad Request",description:"Id you entered doesn't exist enter Valid Id"});
     }
-    
 }))
 
-
 app.get("/listings/:id/edit",wrapAsync(async(req,res)=>{
-    console.log("/listings/id/edit");
-
-    let {id}=req.params;
-    let data=await Listing.findById(id);
-    res.render("edit.ejs",{list : data});
+    try{
+        let {id}=req.params;
+        let data=await Listing.findById(id);
+        res.render("edit.ejs",{list :data});
+    }
+    catch(err){
+        res.render("error.ejs",{code : 400,msg : "Bad Request",description:"Id you entered doesn't exist enter Valid Id"});
+    }
 }))
 
 app.patch("/listings/:id",wrapAsync(async (req,res)=>{
-    console.log("/listings/id patch");
-
-    let {id}=req.params;
-    await Listing.findByIdAndUpdate(id,req.body);
-    let lists=await Listing.find({});
-    res.render("index.ejs",{lists});
+    let {error}= listSchema.validate(req.body);
+    if(error){
+        res.render("error.ejs",{code : 400,msg:"Bad Request",description:"Enter Valid Data"});
+    }
+    else{
+        try{
+            let {id}=req.params;
+            await Listing.findByIdAndUpdate(id,req.body);
+            let lists=await Listing.find({});
+            res.render("index.ejs",{lists});
+        }
+        catch(err){
+            res.render("error.ejs",{code : 400,msg : "Bad Request",description:"Id you entered doesn't exist enter Valid Id"});
+        }
+    }
 }))
 
 app.get("/listings/:id/delete",wrapAsync(async (req,res)=>{
-    console.log("/listings/id delete");
-
-    let {id}=req.params;
-    await Listing.findByIdAndDelete(id,req.body);
-    let lists=await Listing.find({});
-    res.render("index.ejs",{lists});
+    try{
+        let {id}=req.params;
+        await Listing.findByIdAndDelete(id,req.body);
+        let lists=await Listing.find({});
+        res.render("index.ejs",{lists});
+    }
+    catch(err){
+        res.render("error.ejs",{code : 400,msg : "Bad Request",description:"Id you entered doesn't exist enter Valid Id"});
+    }
 }))
 
 app.get("*",(req,res)=>{
