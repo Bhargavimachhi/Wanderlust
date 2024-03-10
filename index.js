@@ -19,6 +19,8 @@ app.use(express.urlencoded({extended :true}));
 app.use(express.json());
 app.use(methodOverride('_method'));
 
+app.engine("ejs",ejsMate);
+
 async function main(){
     mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
 }
@@ -156,6 +158,10 @@ app.get("/listings/:id/review/:rid",wrapAsync(async (req,res)=>{
         res.redirect(`/listings/${id}`);
     }
 }));
+
+app.get("/",(req,res)=>{
+    res.render("temp.ejs");
+})
 
 app.get("*",(req,res)=>{
     res.render("error.ejs",{code : 404,msg:"Page Not Found",description:""});
