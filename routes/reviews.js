@@ -13,21 +13,22 @@ function wrapAsync(fn){
 app.post("/",wrapAsync(async (req,res)=>{
     let {id}=req.params;
     let data=await Listing.findById(id);
-    console.log(req.body);
     if(!data){
-        res.render("error.ejs",{code : 400,msg:"Bad Request",description:"Id you entered doesn't exist enter Valid Id"});
+        req.flash("error","Id doesn't Exist");
+        res.redirect("/listings");
     }
     else{
         let {error}= reviewSchema.validate(req.body);
         if(error){
-            console.log(error.message);
-            res.render("error.ejs",{code : 400,msg:"Bad Request",description:error.message});
+            req.flash("error","Invalid data Entered");
+            res.redirect(`/listings/${id}`);
         }
         else{
             let newReview=new Review(req.body);
             data.review.push(newReview);
             await data.save();
             await newReview.save();
+            req.flash("success","Review Added");
             res.redirect(`/listings/${id}`);
         }
     }
@@ -35,11 +36,11 @@ app.post("/",wrapAsync(async (req,res)=>{
 
 app.get("/:rid",wrapAsync(async (req,res)=>{
     let {id,rid}=req.params;
-    console.log(id,rid);
     let list=await Listing.findById(id);
     let review=await Review.findById(rid);
     if(!list || !review){
-        res.render("error.ejs",{code : 400,msg:"Bad Request",description:"List or Review doesn't exist"});
+        req.flash("error","Listing or Review Doesn't Exist");
+        res.redirect(`/listings/${id}`);
     }
     else{
         for(let i=0;i<list.review.length;i++){
@@ -50,6 +51,7 @@ app.get("/:rid",wrapAsync(async (req,res)=>{
             }
         }
         await Review.findByIdAndDelete({_id : rid});
+        req.flash("success","Review Deleted");
         res.redirect(`/listings/${id}`);
     }
 }));
