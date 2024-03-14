@@ -3,7 +3,7 @@ const app=express.Router({mergeParams : true});
 const Listing=require("../models/listing.js");
 const Review=require("../models/review.js");
 const listSchema = require("../utils/listValidation.js");
-
+const { isLoggedin } = require("../middlewares.js");
 
 function wrapAsync(fn){
     return function(req,res,next){
@@ -12,15 +12,16 @@ function wrapAsync(fn){
 }
 
 app.get("/",wrapAsync(async (req,res)=>{
+    console.log(req.user);
     let lists=await Listing.find();
     res.render("index.ejs",{lists});
 }))
 
-app.get("/new",wrapAsync(async (req,res)=>{
+app.get("/new",isLoggedin,wrapAsync(async (req,res)=>{
     res.render("new.ejs");
 }))
 
-app.post("/new",wrapAsync(async (req,res,next)=>{
+app.post("/new",isLoggedin,wrapAsync(async (req,res,next)=>{
     let {error}= listSchema.validate(req.body);
     if(error){
         req.flash("error","Invalid data Entered");
@@ -46,7 +47,7 @@ app.get("/:id",wrapAsync(async (req,res)=>{
     }
 }))
 
-app.get("/:id/edit",wrapAsync(async(req,res)=>{
+app.get("/:id/edit",isLoggedin,wrapAsync(async(req,res)=>{
     try{
         let {id}=req.params;
         let data=await Listing.findById(id);
@@ -58,7 +59,7 @@ app.get("/:id/edit",wrapAsync(async(req,res)=>{
     }
 }))
 
-app.patch("/:id",wrapAsync(async (req,res)=>{
+app.patch("/:id",isLoggedin,wrapAsync(async (req,res)=>{
     let {id}=req.params;
     let {error}= listSchema.validate(req.body);
     if(error){
@@ -78,7 +79,7 @@ app.patch("/:id",wrapAsync(async (req,res)=>{
     }
 }))
 
-app.get("/:id/delete",wrapAsync(async (req,res)=>{
+app.get("/:id/delete",isLoggedin,wrapAsync(async (req,res)=>{
     try{
         let {id}=req.params;
         let data = await Listing.findByIdAndDelete(id,req.body);

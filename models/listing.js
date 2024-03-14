@@ -5,7 +5,10 @@ let listSchema=new mongoose.Schema({
         type: String,
         required: true,
       },
-    description: String,
+    description: {
+      type : String,
+      required : true
+    },
     image: {
         type: String,
         default:
@@ -16,7 +19,8 @@ let listSchema=new mongoose.Schema({
             : v,
       },
       review : [{
-        type : Object,
+        type : mongoose.Schema.Types.ObjectId,
+        ref:'Review'
       }],
       price: Number,
       location: String,

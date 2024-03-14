@@ -3,6 +3,7 @@ const app=express.Router({mergeParams : true});
 const Listing=require("../models/listing.js");
 const Review=require("../models/review.js");
 const reviewSchema = require("../utils/reviewValidation.js");
+const {isLoggedin} = require("../middlewares.js");
 
 function wrapAsync(fn){
     return function(req,res,next){
@@ -10,7 +11,7 @@ function wrapAsync(fn){
     }
 }
 
-app.post("/",wrapAsync(async (req,res)=>{
+app.post("/",isLoggedin,wrapAsync(async (req,res)=>{
     let {id}=req.params;
     let data=await Listing.findById(id);
     if(!data){
@@ -34,7 +35,7 @@ app.post("/",wrapAsync(async (req,res)=>{
     }
 }))
 
-app.get("/:rid",wrapAsync(async (req,res)=>{
+app.get("/:rid",isLoggedin,wrapAsync(async (req,res)=>{
     let {id,rid}=req.params;
     let list=await Listing.findById(id);
     let review=await Review.findById(rid);

@@ -9,6 +9,15 @@ const flash=require("connect-flash");
 const session=require("express-session")
 const listRouter =require("./routes/listings.js");
 const reviewRouter = require("./routes/reviews.js");
+const validationRouter = require("./routes/validation.js");
+const passport=require("passport");
+const LocalStrategy=require("passport-local");
+const User=require("./models/user.js");
+const {isLoggedin} = require("./middlewares.js");
+
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
 
 app.set("views",path.join(__dirname,"views"));
 app.set("view engine","ejs");
@@ -31,6 +40,8 @@ const sessionOptions={
 app.use(session(sessionOptions));
 app.use(flash()); 
 app.engine("ejs",ejsMate);
+app.use(passport.initialize());
+app.use(passport.session());
 
 async function main(){
     mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
@@ -54,10 +65,7 @@ app.use((req,res,next)=>{
 
 app.use("/listings/:id/review",reviewRouter);
 app.use("/listings",listRouter);
-
-app.get("/",(req,res)=>{
-    res.render("temp.ejs");
-})
+app.use("/",validationRouter);
 
 app.get("*",(req,res)=>{
     res.render("error.ejs",{code : 404,msg:"Page Not Found",description:""});
