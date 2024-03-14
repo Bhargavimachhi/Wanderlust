@@ -45,16 +45,23 @@ app.get("/:rid",isLoggedin,wrapAsync(async (req,res)=>{
         res.redirect(`/listings/${id}`);
     }
     else{
-        for(let i=0;i<list.review.length;i++){
-            if(list.review[i]._id == rid){
-                list.review.splice(i,i+1);
-                await list.save();
-                break;
+        let data=await Review.findById(rid);
+        if(data.author === req.user.username){
+            for(let i=0;i<list.review.length;i++){
+                if(list.review[i]._id == rid){
+                    list.review.splice(i,i+1);
+                    await list.save();
+                    break;
+                }
             }
+            await Review.findByIdAndDelete({_id : rid});
+            req.flash("success","Review Deleted");
+            res.redirect(`/listings/${id}`);
         }
-        await Review.findByIdAndDelete({_id : rid});
-        req.flash("success","Review Deleted");
-        res.redirect(`/listings/${id}`);
+        else{
+            req.flash("error","You don't have permission to access");
+            res.redirect("/listings");
+        }
     }
 }));
 

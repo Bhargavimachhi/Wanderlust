@@ -27,7 +27,8 @@ app.post("/new",isLoggedin,wrapAsync(async (req,res,next)=>{
         res.redirect("/listings/new");
     }
     else{
-        let listing=new Listing(req.body,{author:req.user.username});
+        let {price,location,title,image,description}=req.body
+        let listing=new Listing({price:price,description:description,title:title,image:image,location:location,author:req.user.username});
         await listing.save();
         req.flash("success","Listing created");
         res.redirect("/listings");
@@ -52,10 +53,18 @@ app.get("/:id",wrapAsync(async (req,res)=>{
 }))
 
 app.get("/:id/edit",isLoggedin,wrapAsync(async(req,res)=>{
+
     try{
         let {id}=req.params;
         let data=await Listing.findById(id);
-        res.render("edit.ejs",{list :data});
+
+        if(req.user.username === data.author){
+            res.render("edit.ejs",{list :data});
+        }
+        else{
+            req.flash("error","You don't have permission to access");
+            res.redirect("/listings");
+        }
     }
     catch(err){
         req.flash("error","Id doesn't Exist");
@@ -72,9 +81,16 @@ app.patch("/:id",isLoggedin,wrapAsync(async (req,res)=>{
     }
     else{
         try{
-            await Listing.findByIdAndUpdate(id,req.body);
-            req.flash("success","Listing Updated");
-            res.redirect("/listings");
+            let data=await Listing.findById(id)
+            if(data.author === req.user.username){
+                await Listing.findByIdAndUpdate(id,req.body);
+                req.flash("success","Listing Updated");
+                res.redirect("/listings");
+            }
+            else{
+                req.flash("error","You don't have permission to access");
+                res.redirect("/listings");
+            }
         }
         catch(err){
             req.flash("error","Id doesn't Exist");
@@ -86,10 +102,17 @@ app.patch("/:id",isLoggedin,wrapAsync(async (req,res)=>{
 app.get("/:id/delete",isLoggedin,wrapAsync(async (req,res)=>{
     try{
         let {id}=req.params;
-        let data = await Listing.findByIdAndDelete(id,req.body);
-        await Review.deleteMany({_id : {$in : data.review}});
-        req.flash("success","Listing Deleted");
-        res.redirect("/listings");
+        let curr=await Listing.findById(id);
+        if(curr.author === req.user.username){
+            let data=await Listing.findByIdAndDelete(id,req.body);
+            await Review.deleteMany({_id : {$in : data.review}});
+            req.flash("success","Listing Deleted");
+            res.redirect("/listings");
+        }
+        else{
+            req.flash("error","You don't have permission to access");
+            res.redirect("/listings");
+        }
     }
     catch(err){
         req.flash("error","Listing Couldn't Deleted");
