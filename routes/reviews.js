@@ -25,7 +25,8 @@ app.post("/",isLoggedin,wrapAsync(async (req,res)=>{
             res.redirect(`/listings/${id}`);
         }
         else{
-            let newReview=new Review(req.body);
+            let {comment,rating}=req.body;
+            let newReview=new Review({rating : rating ,comment: comment, author : req.user.username});
             data.review.push(newReview);
             await data.save();
             await newReview.save();

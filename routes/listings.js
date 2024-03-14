@@ -12,7 +12,6 @@ function wrapAsync(fn){
 }
 
 app.get("/",wrapAsync(async (req,res)=>{
-    console.log(req.user);
     let lists=await Listing.find();
     res.render("index.ejs",{lists});
 }))
@@ -28,7 +27,7 @@ app.post("/new",isLoggedin,wrapAsync(async (req,res,next)=>{
         res.redirect("/listings/new");
     }
     else{
-        let listing=new Listing(req.body);
+        let listing=new Listing(req.body,{author:req.user.username});
         await listing.save();
         req.flash("success","Listing created");
         res.redirect("/listings");
@@ -39,7 +38,12 @@ app.get("/:id",wrapAsync(async (req,res)=>{
     try{
         let {id}=req.params;
         let data=await Listing.findById(id);
-        res.render("view.ejs",{list :data});
+        let reviews=[];
+        for(let curr of data.review){
+            let d=await Review.findById(curr);
+            reviews.push(d);
+        }
+        res.render("view.ejs",{list : data , reviews});
     }
     catch(err){
         req.flash("error","Id doesn't Exist");

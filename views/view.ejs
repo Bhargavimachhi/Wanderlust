@@ -7,6 +7,7 @@
                 <div class="card h-100">
                     <img src="<%= list.image %>" class="card-img-top listing-image" style="height: 20rem;">
                     <div class="card-body">
+                        <p class="card-text">@<%= list.author %></p>
                         <p class="card-text"><%= list.description %></p>
                         <p class="card-text">&#x20B9; <%= list.price %>/night @<%= list.location %></p>
                         <div class="container" style="display: flex;">
@@ -38,16 +39,18 @@
     </div><br>
     <hr>
     <div class="container">
-        <h4>Reviews &nbsp; <%=list.review.length %></h4><br>
+        <h4>Reviews &nbsp; <%=reviews.length %></h4><br>
             <div class="row">
-                <% for(let r of list.review){ %>
+                <% for(let r of reviews){ %>
                 <div class="col-sm-6">
                   <div class="card" style="border: 1px solid red !important;">
                     <div class="card-body">
-                      <h5 class="card-title">User</h5>
+                      <h5 class="card-title">@<%= r.author %></h5>
                       <p class="card-text">Rating : <%= r.rating %></p>
                       <p class="card-text"><%= r.comment %></p>
-                      <a href="/listings/<%= list.id%>/review/<%= r._id %>"><button class="btn" style="background-color: red; color: white;">Delete</button></a>
+                      <% if(user && r.author===user.username) { %>
+                        <a href="/listings/<%= list.id%>/review/<%= r._id %>"><button class="btn" style="background-color: red; color: white;">Delete</button></a>
+                      <% } %> 
                     </div>
                   </div>
                 </div>

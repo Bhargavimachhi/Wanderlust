@@ -7,6 +7,7 @@ const sampleListings = [
       price: 1500,
       location: "Malibu",
       country: "United States",
+      author:"student"
     },
     {
       title: "Modern Loft in Downtown",
@@ -16,6 +17,7 @@ const sampleListings = [
       price: 1200,
       location: "New York City",
       country: "United States",
+      author:"student"
     },
     {
       title: "Mountain Retreat",
@@ -25,6 +27,7 @@ const sampleListings = [
       price: 1000,
       location: "Aspen",
       country: "United States",
+      author:"demo"
     },
     {
       title: "Historic Villa in Tuscany",
@@ -34,6 +37,7 @@ const sampleListings = [
       price: 2500,
       location: "Florence",
       country: "Italy",
+      author:"demo"
     },
     {
       title: "Secluded Treehouse Getaway",
@@ -43,6 +47,7 @@ const sampleListings = [
       price: 800,
       location: "Portland",
       country: "United States",
+      author:"demo"
     }
   ];
   

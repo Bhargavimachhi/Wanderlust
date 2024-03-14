@@ -13,7 +13,6 @@ const validationRouter = require("./routes/validation.js");
 const passport=require("passport");
 const LocalStrategy=require("passport-local");
 const User=require("./models/user.js");
-const {isLoggedin} = require("./middlewares.js");
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
@@ -60,6 +59,7 @@ app.listen(port,()=>{
 app.use((req,res,next)=>{
     res.locals.success=req.flash("success");
     res.locals.error=req.flash("error");
+    res.locals.user=req.user;
     next();
 })
 
@@ -68,9 +68,11 @@ app.use("/listings",listRouter);
 app.use("/",validationRouter);
 
 app.get("*",(req,res)=>{
-    res.render("error.ejs",{code : 404,msg:"Page Not Found",description:""});
+    req.flash("error","Page Not Found")
+    res.redirect("/listings");
 })
 
 app.use((err,req,res,next)=>{
-    res.render("error.ejs",{code : 500,msg:"Internal Server Error",description:err.message});
+    req.flash("error",err.message)
+    res.redirect("/listings");
 })
