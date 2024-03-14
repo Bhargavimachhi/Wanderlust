@@ -1,7 +1,7 @@
 module.exports.isLoggedin=(req,res,next)=>{
     if(!req.isAuthenticated()){
         req.flash("error","You need to Login First");
-        res.redirect("/login");
+        res.redirect("/listings");
     }
     else{
         next();

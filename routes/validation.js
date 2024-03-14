@@ -3,21 +3,12 @@ const app=express.Router({mergeParams : true});
 const User=require("../models/user.js");
 const userSchema=require("../utils/userValidation.js");
 const passport=require("passport");
-const { isLoggedin } = require("../middlewares.js");
 
 function wrapAsync(fn){
     return function(req,res,next){
         fn(req,res,next).catch((err)=>next(err));
     }
 }
-
-app.get("/signup",(req,res)=>{
-    res.render("users/signup.ejs");
-});
-
-app.get("/login",(req,res)=>{
-    res.render("users/login.ejs");
-});
 
 app.post("/signup",wrapAsync(async (req,res)=>{
     let {error}= userSchema.validate(req.body);
@@ -46,7 +37,7 @@ app.post("/signup",wrapAsync(async (req,res)=>{
     }
 }));
 
-app.post("/login",(req,res,next)=>{console.log(req.body); next();},passport.authenticate("local",{failureRedirect:"/login",failureFlash:true}),wrapAsync(async (req,res)=>{
+app.post("/login",passport.authenticate("local",{failureRedirect:"/login",failureFlash:true}),wrapAsync(async (req,res)=>{
     req.flash("success","Welcome to Wanderlust");
     res.redirect("/listings");
 }));
