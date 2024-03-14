@@ -46,7 +46,7 @@ app.post("/signup",wrapAsync(async (req,res)=>{
     }
 }));
 
-app.post("/login",passport.authenticate("local",{failureRedirect:"/login",failureFlash:true}),wrapAsync(async (req,res)=>{
+app.post("/login",(req,res,next)=>{console.log(req.body); next();},passport.authenticate("local",{failureRedirect:"/login",failureFlash:true}),wrapAsync(async (req,res)=>{
     req.flash("success","Welcome to Wanderlust");
     res.redirect("/listings");
 }));
