@@ -35,7 +35,6 @@ module.exports.showListing=async (req,res)=>{
             let d=await Review.findById(curr);
             reviews.push(d);
         }
-        console.log(reviews);
         res.render("view.ejs",{list : data , reviews});
     }
     catch(err){

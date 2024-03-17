@@ -1,7 +1,6 @@
 const Listing=require("../models/listing.js");
 const Review=require("../models/review.js");
 const reviewSchema = require("../utils/reviewValidation.js");
-const {isLoggedin} = require("../middlewares.js");
 
 module.exports.addReview=async (req,res)=>{
     let {id}=req.params;
@@ -38,8 +37,8 @@ module.exports.deleteReview=async (req,res)=>{
     }
     else{
         if(rev.author === req.user.username){
-            let curr=await Listing.findByIdAndUpdate(id,{ $pull: {review : rid}});
-            let curr2=await Review.findByIdAndDelete({_id : rid});
+            await Listing.findByIdAndUpdate(id,{ $pull: {review : rid}});
+            await Review.findByIdAndDelete({_id : rid});
             req.flash("success","Review Deleted");
             res.redirect(`/listings/${id}`);
         }

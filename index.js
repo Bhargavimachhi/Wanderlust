@@ -68,7 +68,7 @@ app.use("/listings",listRouter);
 app.use("/",validationRouter);
 
 app.get("*",(req,res)=>{
-    req.flash("error","Page Not Found")
+    req.flash("error","Invalid Request")
     res.redirect("/listings");
 })
 

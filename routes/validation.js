@@ -11,7 +11,15 @@ function wrapAsync(fn){
 
 app.post("/signup",wrapAsync(validation.signupUser));
 
-app.post("/login",passport.authenticate("local",{failureRedirect:"/login",failureFlash:true}),wrapAsync(validation.loginUser));
+app.post("/login",
+    passport.authenticate("local",{
+        failureRedirect:"/login",
+        failureFlash: {
+            type: 'error',
+            message: 'Invalid email and/ or password.'
+        },
+    }),
+    wrapAsync(validation.loginUser));
 
 app.get("/logout",validation.logoutUser);
 

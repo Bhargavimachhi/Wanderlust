@@ -10,21 +10,12 @@
 			<a href="/listings" class="nav-item nav-link active">All Listings</a>&nbsp;&nbsp;
 			<a href="/listings/new" class="nav-item nav-link active">Add Listing</a>
 		</div>
-		<!-- <form class="navbar-form form-inline">
-			<div class="input-group search-box">								
-				<input type="text" id="search" class="form-control" placeholder="Search here...">
-				<div class="input-group-append">
-					<span class="input-group-text">
-						<i class="material-icons">&#xE8B6;</i>
-					</span>
-				</div>
-			</div>
-		</form> -->
-    <% console.log(user); if(!user){ %>
+    <% if(!user){ %>
 		<div class="navbar-nav ml-auto action-buttons">
 			<div class="nav-item dropdown">
-				<a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle mr-4">Login</a>
-        <div class="dropdown-menu action-form">
+				<!-- <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle mr-4">Login</a> -->
+				<a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle sign-up-btn" style="background-color: red !important; color: white !important;">Login</a> &nbsp;&nbsp;
+        		<div class="dropdown-menu action-form">
 					<form action="/login" method="post" class="needs-validation" novalidate>
 						<p class="hint-text">Sign in with your account</p>
 						<div class="form-group">
