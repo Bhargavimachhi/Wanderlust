@@ -31,22 +31,15 @@ module.exports.addReview=async (req,res)=>{
 module.exports.deleteReview=async (req,res)=>{
     let {id,rid}=req.params;
     let list=await Listing.findById(id);
-    let review=await Review.findById(rid);
-    if(!list || !review){
+    let rev=await Review.findById(rid);
+    if(!list || !rev){
         req.flash("error","Listing or Review Doesn't Exist");
         res.redirect(`/listings/${id}`);
     }
     else{
-        let data=await Review.findById(rid);
-        if(data.author === req.user.username){
-            for(let i=0;i<list.review.length;i++){
-                if(list.review[i]._id == rid){
-                    list.review.splice(i,i+1);
-                    await list.save();
-                    break;
-                }
-            }
-            await Review.findByIdAndDelete({_id : rid});
+        if(rev.author === req.user.username){
+            let curr=await Listing.findByIdAndUpdate(id,{ $pull: {review : rid}});
+            let curr2=await Review.findByIdAndDelete({_id : rid});
             req.flash("success","Review Deleted");
             res.redirect(`/listings/${id}`);
         }
