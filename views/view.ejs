@@ -55,8 +55,12 @@
                   <div class="card" style="border: 1px solid red !important;">
                     <div class="card-body">
                       <h5 class="card-title">@<%= r.author %></h5>
-                      <p class="card-text">Rating : <%= r.rating %></p>
                       <p class="card-text"><%= r.comment %></p>
+                      <div><%= r.rating %>
+                        <% for(let i=0;i<r.rating;i++){ %>
+                            <i class="fa fa-star"></i>
+                        <% } %>
+                      </div>
                       <% if(user && r.author===user.username) { %>
                         <a href="/listings/<%= list.id%>/review/<%= r._id %>"><button class="btn" style="background-color: red; color: white;">Delete</button></a>
                       <% } %> 
