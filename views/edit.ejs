@@ -4,7 +4,6 @@
         <h2>Edit Listing</h2>
         <br>
         <form method="post" action="/listings/<%= list.id %>?_method=PATCH" class="needs-validation" novalidate enctype="multipart/form-data">
-            <div class="form-row">
               <div class="col-md-4 mb-3">
                 <label for="title">Title</label>
                 <input type="text" class="form-control" id="validationCustom01" name="title" placeholder="Enter Title" value="<%= list.title %>" required>
@@ -21,10 +20,9 @@
               </div>
               <div class="col-md-4 mb-3">
                 <label for="image">Upload Image</label>
+                <img src="<%= list.image.url %>" style="width: 10rem;">
                 <input type="file" class="form-control" id="validationCustom02" name="image" value="<%= list.image.url %>" >
               </div>
-            </div>
-            <div class="form-row">
               <div class="col-md-6 mb-3">
                 <label for="location">Location</label>
                 <input type="text" class="form-control" id="validationCustom03" name="location" placeholder="Enter Location"  value="<%= list.location %>" required>
@@ -39,8 +37,8 @@
                   Price is required.
                 </div>
               </div>
-            </div>
-            <button class="btn" style="background-color: red; color: white;">Submit form</button>
+            <!-- </div> -->
+            <button class="btn" style="background-color: red; color: white;">Submit form</button><br>
         </form>
     </div>
 </body>
