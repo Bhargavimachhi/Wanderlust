@@ -3,7 +3,7 @@
     <div class="container">
         <h2>Edit Listing</h2>
         <br>
-        <form method="post" action="/listings/<%= list.id %>?_method=PATCH" class="needs-validation" novalidate>
+        <form method="post" action="/listings/<%= list.id %>?_method=PATCH" class="needs-validation" novalidate enctype="multipart/form-data">
             <div class="form-row">
               <div class="col-md-4 mb-3">
                 <label for="title">Title</label>
@@ -20,8 +20,8 @@
                 </div>
               </div>
               <div class="col-md-4 mb-3">
-                <label for="image">Image Link</label>
-                <input type="text" class="form-control" id="validationCustom02" name="image" placeholder="Enter Valid Image Link"  value="<%= list.image %>" >
+                <label for="image">Upload Image</label>
+                <input type="file" class="form-control" id="validationCustom02" name="image" value="<%= list.image.url %>" >
               </div>
             </div>
             <div class="form-row">

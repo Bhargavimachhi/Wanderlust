@@ -12,14 +12,27 @@ module.exports.renderNewListingPage=async (req,res)=>{
 };
 
 module.exports.addNewListing=async (req,res,next)=>{
-    let {error}= listSchema.validate(req.body);
+    let obj={
+        price:req.body.price,
+        description:req.body.description,
+        title:req.body.title,
+        location:req.body.location,
+        author:req.user.username,
+        image : {
+            url:req.file.path,
+            filename:req.file.fiename,
+        }
+    }
+    let {error}= listSchema.validate(obj);
     if(error){
+        console.log(error);
         req.flash("error","Invalid data Entered");
         res.redirect("/listings/new");
     }
     else{
-        let {price,location,title,image,description}=req.body
-        let listing=new Listing({price:price,description:description,title:title,image:image,location:location,author:req.user.username});
+        let listing=new Listing(obj);
+        listing.image.url=req.file.path,
+        listing.image.filename=req.file.filename,
         await listing.save();
         req.flash("success","Listing created");
         res.redirect("/listings");
@@ -65,16 +78,27 @@ module.exports.renderEditPage=async(req,res)=>{
 
 module.exports.editListing=async (req,res)=>{
     let {id}=req.params;
-    let {error}= listSchema.validate(req.body);
+    let obj={
+        price:req.body.price,
+        description:req.body.description,
+        title:req.body.title,
+        location:req.body.location,
+        author:req.user.username,
+        image : {
+            url:req.file.path,
+            filename:req.file.fiename,
+        }
+    }
+    let {error}= listSchema.validate(obj);
     if(error){
         req.flash("error","Invalid data Entered");
         res.redirect(`/listings/${id}/edit`);
     }
     else{
         try{
-            let data=await Listing.findById(id)
+            let data=await Listing.findById(id);
             if(data.author === req.user.username){
-                await Listing.findByIdAndUpdate(id,req.body);
+                await Listing.findByIdAndUpdate(id,obj);
                 req.flash("success","Listing Updated");
                 res.redirect("/listings");
             }

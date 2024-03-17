@@ -6,7 +6,7 @@
             <% for(let list of lists){ %>
                 <a href="/listings/<%= list.id%>" style="text-decoration: none;">
                     <div class="card h-100">
-                        <img src="<%= list.image %>" class="card-img-top listing-image" style="height: 20rem;">
+                        <img src="<%= list.image.url %>" class="card-img-top listing-image" style="height: 20rem;">
                         <div class="card-body">
                             <h5 class="card-title"><%= list.title %></h5>
                             <p class="card-text">&#x20B9; <%= list.price %>/night @<%= list.location %></p>

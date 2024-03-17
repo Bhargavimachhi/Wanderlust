@@ -1,3 +1,7 @@
+if(process.env.NODE_ENV != 'production'){
+    require('dotenv').config();
+}
+
 const express=require("express");
 const app=express();
 const path=require("path");
@@ -13,6 +17,9 @@ const validationRouter = require("./routes/validation.js");
 const passport=require("passport");
 const LocalStrategy=require("passport-local");
 const User=require("./models/user.js");
+const {storage}=require("./cloudConfig.js");
+const multer=require("multer");
+const upload=multer({storage});
 
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
