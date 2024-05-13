@@ -1,0 +1,43 @@
+<% layout("includes/boilerplate") %>
+<body>
+    <div class="container">
+        <h2>Edit Listing</h2>
+        <br>
+        <form method="post" action="/listings/<%= list.id %>?_method=PATCH" class="needs-validation" novalidate enctype="multipart/form-data">
+              <div class="col-md-4 mb-3">
+                <label for="title">Title</label>
+                <input type="text" class="form-control" id="validationCustom01" name="title" placeholder="Enter Title" value="<%= list.title %>" required>
+                <div class="invalid-feedback">
+                  Title is required
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <label for="description">Description</label>
+                <input type="text" class="form-control" id="validationCustom02" name="description" placeholder="Enter Description" value="<%= list.description %>" required>
+                <div class="invalid-feedback">
+                  Description is required
+                </div>
+              </div>
+              <div class="col-md-4 mb-3">
+                <img src="<%= list.image.url %>" alt="" style="width: 300px;">
+                <label for="image">Upload Image</label>
+                <input type="file" class="form-control" id="validationCustom02" name="image" value="<%= list.image %>" >
+              </div>
+              <div class="col-md-6 mb-3">
+                <label for="location">Location</label>
+                <input type="text" class="form-control" id="validationCustom03" name="location" placeholder="Enter Location"  value="<%= list.location %>" required>
+                <div class="invalid-feedback">
+                  Location is required.
+                </div>
+              </div>
+              <div class="col-md-3 mb-3">
+                <label for="price">Price</label>
+                <input type="text" class="form-control" id="validationCustom05" name="price" placeholder="Enter price per night" value="<%= list.price %>" required>
+                <div class="invalid-feedback">
+                  Price is required.
+                </div>
+              </div>
+            <button class="btn" style="background-color: red; color: white;">Submit form</button><br>
+        </form>
+    </div>
+</body>
