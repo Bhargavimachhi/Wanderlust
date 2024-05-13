@@ -3,59 +3,57 @@
 	<button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
 		<span class="navbar-toggler-icon"></span>
 	</button>
-	<!-- Collection of nav links, forms, and other content for toggling -->
+	
 	<div id="navbarCollapse" class="collapse navbar-collapse justify-content-start">
 		<div class="navbar-nav">
-			<a href="/listings" class="nav-item nav-link active">Home</a>&nbsp;&nbsp;
-			<a href="/listings" class="nav-item nav-link active">All Listings</a>&nbsp;&nbsp;
+			<a href="/listings" class="nav-item nav-link active">Explore</a>&nbsp;&nbsp;
 			<a href="/listings/new" class="nav-item nav-link active">Add Listing</a>
 		</div>
     <% if(!user){ %>
 		<div class="navbar-nav ml-auto action-buttons">
 			<div class="nav-item dropdown">
-				<!-- <a href="#" data-toggle="dropdown" class="nav-link dropdown-toggle mr-4">Login</a> -->
 				<a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle sign-up-btn" style="background-color: red !important; color: white !important;">Login</a> &nbsp;&nbsp;
         		<div class="dropdown-menu action-form">
 					<form action="/login" method="post" class="needs-validation" novalidate>
 						<p class="hint-text">Sign in with your account</p>
 						<div class="form-group">
 							<input type="text" class="form-control" name="username" placeholder="Username" required>
-              <div class="invalid-feedback">
-                Username is required
-              </div>
+              				<div class="invalid-feedback">
+               					Username is required
+              				</div>
 						</div>
 						<div class="form-group">
 							<input type="password" class="form-control" name="password" placeholder="Password" required>
-              <div class="invalid-feedback">
-                Password is required
-              </div>
+							<div class="invalid-feedback">
+								Password is required
+							</div>
 						</div>
 						<input type="submit" class="btn btn-primary btn-block" value="Login" style="background-color: red !important; color: white !important;">
 					</form>
-        </div>
+        		</div>
 			</div>
 			<div class="nav-item dropdown">
 				<a href="#" data-toggle="dropdown" class="btn btn-primary dropdown-toggle sign-up-btn" style="background-color: red !important; color: white !important;">Sign up</a>
-        <div class="dropdown-menu action-form">
+        		<div class="dropdown-menu action-form">
 					<form action="/signup" method="post" class="needs-validation" novalidate>
 						<p class="hint-text">Fill in this form to create your account!</p>
 						<div class="form-group">
 							<input type="text" class="form-control" name="username" placeholder="Username" required>
-              <div class="invalid-feedback">
-                Username is required
-              </div>
+							<div class="invalid-feedback">
+								Username is required
+							</div>
 						</div>
-            <div class="form-group">
+            			<div class="form-group">
 							<input type="text" class="form-control" name="email" placeholder="Email" required>
-              <div class="invalid-feedback">
-                Email is required
-              </div>
+							<div class="invalid-feedback">
+								Email is required
+							</div>
 						</div>
 						<div class="form-group">
 							<input type="password" class="form-control" name="password" placeholder="Password" required>
-              <div class="invalid-feedback">
-                Password is required
-              </div>
+							<div class="invalid-feedback">
+								Password is required
+							</div>
 						</div>
 						<input type="submit" class="btn btn-primary btn-block" value="Sign up" style="background-color: red !important; color: white !important;">
 					</form>
@@ -63,8 +61,16 @@
 			</div>
       <% } 
       else {%>
-      <div class="nav-item dropdown ms-auto">
-				<a href="/logout" class="btn btn-primary sign-up-btn" style="background-color: red !important; color: white !important;">LogOut</a>
+      		<div class="navbar-nav ml-auto action-buttons">
+				<div class="nav-item dropdown">
+					<a href="#" data-toggle="dropdown" id="user-icon" class="btn btn-primary dropdown-toggle sign-up-btn">
+						<i class="fa fa-user-circle-o"></i>
+					</a>
+					<div class="dropdown-menu action-form">
+					<form action="/logout" method="get" class="needs-validation" novalidate>
+						<input type="submit" class="btn btn-primary btn-block" value="Log Out" style="background-color: red !important; color: white !important;">
+					</form>
+				</div>
 			</div>
       <% } %>
     </div>

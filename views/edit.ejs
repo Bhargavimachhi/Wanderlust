@@ -21,7 +21,10 @@
               <div class="col-md-4 mb-3">
                 <label for="image">Upload Image</label>
                 <img src="<%= list.image.url %>" style="width: 300px;">
-                <input type="file" class="form-control" id="validationCustom02" name="image">
+                <input type="file" class="form-control" id="validationCustom02" name="image" value="<%= list.image.url %>" required>
+                <div class="invalid-feedback">
+                  Image is required
+                </div>
               </div>
               <div class="col-md-6 mb-3">
                 <label for="location">Location</label>
