@@ -39,7 +39,7 @@ const store = MongoStore.create({
     mongoUrl: dbUrl,
     touchAfter: 24 * 3600,
     crypto : {
-        secret : "sjwgjqwgdjgqwdjqdjqjwhdqgwje",
+        secret : process.env.SECRET,
     },
 });
 store.on("error" , () => {
@@ -47,7 +47,7 @@ store.on("error" , () => {
 })
 const sessionOptions={
     store,
-    secret :"sjwgjqwgdjgqwdjqdjqjwhdqgwje",
+    secret : process.env.SECRET,
     resave : false,
     saveUninitialized:true,
     cookie:{
