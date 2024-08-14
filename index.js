@@ -7,6 +7,8 @@ const app=express();
 const path=require("path");
 const methodOverride=require("method-override");
 const port=8000;
+const dbUrl = process.env.ATLASDBURL;
+const MongoStore = require('connect-mongo');
 const mongoose=require("mongoose");
 const ejsMate=require("ejs-mate");
 const flash=require("connect-flash");
@@ -33,7 +35,18 @@ app.use(express.static(path.join(__dirname,"public")));
 app.use(express.urlencoded({extended :true}));
 app.use(express.json());
 app.use(methodOverride('_method'));
+const store = MongoStore.create({
+    mongoUrl: dbUrl,
+    touchAfter: 24 * 3600,
+    crypto : {
+        secret : "sjwgjqwgdjgqwdjqdjqjwhdqgwje",
+    },
+});
+store.on("error" , () => {
+    console.log("Error in MONGODB Connect Store", err);
+})
 const sessionOptions={
+    store,
     secret :"sjwgjqwgdjgqwdjqdjqjwhdqgwje",
     resave : false,
     saveUninitialized:true,
@@ -50,7 +63,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 async function main(){
-    mongoose.connect("mongodb://127.0.0.1:27017/wanderlust");
+    mongoose.connect(dbUrl);
 }
 
 main().then(()=>{
