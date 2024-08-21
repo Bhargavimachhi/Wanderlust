@@ -13,7 +13,7 @@ app.post("/signup",wrapAsync(validation.signupUser));
 
 app.post("/login",
     passport.authenticate("local",{
-        failureRedirect:"/login",
+        failureRedirect:"/listings",
         failureFlash: {
             type: 'error',
             message: 'Invalid email and/ or password.'
