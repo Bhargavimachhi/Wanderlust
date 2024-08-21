@@ -83,12 +83,16 @@ app.use((req,res,next)=>{
     next();
 })
 
+app.get("/", (req,res) => {
+    res.render("/listings");
+})
+
 app.use("/listings/:id/review",reviewRouter);
 app.use("/listings",listRouter);
 app.use("/",validationRouter);
 
 app.get("*",(req,res)=>{
-    req.flash("error","Invalid Request")
+    req.flash("error","Page Not Found")
     res.redirect("/listings");
 })
 
